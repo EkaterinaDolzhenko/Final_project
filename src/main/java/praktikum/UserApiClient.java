@@ -17,17 +17,4 @@ public class UserApiClient {
                 .body(json)
                 .post(Constants.BASE_URL + "/api/signup");
     }
-
-    public static Response deleteUser(User user) {
-        // Метод для удаления пользователя после теста
-        String json = String.format(
-                "{\"email\": \"%s\", \"password\": \"%s\"}",
-                user.getEmail(), user.getPassword()
-        );
-
-        return given()
-                .header("Content-type", "application/json")
-                .body(json)
-                .delete(Constants.BASE_URL + "/api/user");
-    }
 }

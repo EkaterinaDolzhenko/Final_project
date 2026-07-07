@@ -3,6 +3,9 @@ package praktikum.steps;
 import io.cucumber.java.ru.Когда;
 import io.cucumber.java.ru.Тогда;
 import io.cucumber.java.ru.Допустим;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import praktikum.*;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -75,7 +78,7 @@ public class CommonSteps {
         context.setAdName(Constants.ADNAME);
     }
 
-    @Допустим("пользователь создал объявление для уделения")
+    @Допустим("пользователь создал объявление для удаления")
     public void userCreatedAdForDelete() {
         DriverManager.initDriver();
 
@@ -106,17 +109,20 @@ public class CommonSteps {
         DriverManager.getCreateListingPage().clickPublishButton();
         DriverManager.refreshPages();
 
-        //Ждём, пока объявление появится в системе
-        try {
-            Thread.sleep(3000); // 3 секунды на индексацию
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        // Ожидаем, что мы покинули страницу создания объявления
+        WebDriver driver = DriverManager.getDriver();
+        WebDriverWait wait = new WebDriverWait(driver, Constants.EXPLICIT_TIMEOUT);
+
+        // Ждём, пока URL перестанет содержать "/create-listing"
+        wait.until(ExpectedConditions.not(
+                ExpectedConditions.urlContains("/create-listing")
+        ));
+
+        // Дополнительно ждём загрузки главной страницы
+        DriverManager.getMainPage().waitForMainPageLoaded();
 
         DriverManager.getMainPage().open();
         DriverManager.refreshPages();
-
-        // Сохраняем название в контекст (уже сделано выше)
     }
 
     @Допустим("пользователь ищет и нажимает на объявление в общем списке")

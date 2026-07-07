@@ -12,8 +12,6 @@ public class ProfilePage {
 
     // Заголовок раздела Мои объявления
     protected final By myAdHeader = By.xpath("//h1[contains(text(), 'Мои объявления')]");
-    // Название объявления
-    protected final By adNameHeader = By.xpath("//div[@class='description']//h2[@class='h2']");
     // Кнопка редактирования объявления
     protected final By editAdButton = By.xpath("//button[@class='editButton']");
     // Кнопка Сохранить изменения
@@ -48,7 +46,6 @@ public class ProfilePage {
         wait.until(ExpectedConditions.visibilityOfElementLocated(editAdButton));
         driver.findElement(editAdButton).click();
     }
-
 
     //Добавили поле driver и wait
     private final WebDriver driver;

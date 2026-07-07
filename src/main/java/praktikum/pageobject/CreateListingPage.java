@@ -9,6 +9,9 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import praktikum.Constants;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
 public class CreateListingPage {
 
     // Поле Название
@@ -17,6 +20,8 @@ public class CreateListingPage {
     protected final By fileInput = By.xpath("//input[@type='file' and @name='img1']");
     // Кнопка Опубликовать
     protected final By publishButton = By.xpath("//button[text()='Опубликовать']");
+    // Контейнер с загруженным фото
+    protected final By uploadedPhotoContainer = By.xpath(".//div[contains(@class, 'upload_edit')]");
 
     @Step("Заполнение названия (с очисткой)")
     public void enterAdName(String adName) {
@@ -35,22 +40,24 @@ public class CreateListingPage {
     @Step("Загрузка фото")
     public void inputFile(String filePath) {
         try {
-            // Используем presenceOfElementLocated для скрытых элементов
+            // Получаем абсолютный путь к файлу в resources
+            String absolutePath = getClass().getClassLoader()
+                    .getResource(filePath)
+                    .getPath();
+            absolutePath = URLDecoder.decode(absolutePath, StandardCharsets.UTF_8.name());
+
+            System.out.println("Загружаем файл: " + absolutePath);
+
             wait.until(ExpectedConditions.presenceOfElementLocated(fileInput));
             WebElement element = driver.findElement(fileInput);
-
-            // Делаем элемент видимым через JavaScript
             ((JavascriptExecutor) driver).executeScript(
                     "arguments[0].style.display='block';", element);
+            element.sendKeys(absolutePath);
 
-            // Загружаем файл
-            element.sendKeys(filePath);
-
-            // Ждём загрузки
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("Ошибка при загрузке фото", e);
+            // Ждём появления контейнера с фото
+            wait.until(ExpectedConditions.visibilityOfElementLocated(uploadedPhotoContainer));
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при загрузке фото: " + e.getMessage(), e);
         }
     }
 

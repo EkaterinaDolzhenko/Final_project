@@ -9,9 +9,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import praktikum.Constants;
 
-import java.util.stream.Collectors;
-import java.util.List;
-
 public class MainPage {
 
     //Кнопка Вход и регистрация
